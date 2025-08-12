@@ -82,13 +82,13 @@ Ensure `model.pkl` and `vectorizer.pkl` are in the same directory as `app.py`.
 ---
 
 ## 📁 File Structure
-
 ```
-├── app.py              # Streamlit frontend
-├── model.pkl           # Trained spam classifier
-├── vectorizer.pkl      # TF-IDF vectorizer
-├── README.md           # Project documentation
-└── requirements.txt    # Python dependencies
+├── app.py                   # Streamlit frontend for real-time classification
+├── model.pkl                # Trained spam classifier model
+├── readme.md                 # Project documentation
+├── sms_spam_detection.ipynb # Jupyter notebook for model training & evaluation
+├── spam.csv                  # Dataset used for training
+├── vectorizer.pkl           # Saved TF-IDF vectorizer
 ```
 
 ---

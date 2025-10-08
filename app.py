@@ -5,7 +5,7 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import re
 
-# Set page to wide mode but keep content centered
+
 st.set_page_config(page_title="Email/SMS Spam Classifier", layout="centered")
 
 nltk.download('punkt')

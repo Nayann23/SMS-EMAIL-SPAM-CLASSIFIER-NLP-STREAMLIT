@@ -1,47 +1,30 @@
 import streamlit as st
 import pickle
-import string
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
+import re
 
-# Download required NLTK data if not already present
+# Set page to wide mode but keep content centered
+st.set_page_config(page_title="Email/SMS Spam Classifier", layout="centered")
+
 nltk.download('punkt')
 nltk.download('stopwords')
 
-# Initialize stemmer
 ps = PorterStemmer()
-
-import re
+stop_words = set(stopwords.words('english'))
 
 def transform_text(text):
     text = text.lower()
-
-    # Replace URLs
     text = re.sub(r'http\S+|www\S+|https\S+', 'URL', text)
-
-    # Replace email addresses
     text = re.sub(r'\S+@\S+', 'EMAIL', text)
-
-    # Replace numbers
     text = re.sub(r'\b\d+\b', 'NUMBER', text)
-
-    # Remove special characters (but keep words and numbers)
     text = re.sub(r'[^\w\s]', ' ', text)
-
-    # Tokenize
     words = nltk.word_tokenize(text)
+    words = [ps.stem(w) for w in words if w not in stop_words]
+    return " ".join(words)
 
-    # Apply stemming and stopword removal
-    filtered_words = []
-    for word in words:
-        if word not in stopwords.words('english'):
-            stemmed = ps.stem(word)
-            filtered_words.append(stemmed)
-
-    return " ".join(filtered_words)
-
-# Load vectorizer and model
+# Load model and vectorizer
 try:
     tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
     model = pickle.load(open('model.pkl', 'rb'))
@@ -49,27 +32,56 @@ except Exception as e:
     st.error(f"Error loading model or vectorizer: {e}")
     st.stop()
 
-# Streamlit UI
+# Title
 st.title("📩 Email/SMS Spam Classifier")
+st.markdown("Enter your message below and click Predict to see if it is Spam or Not Spam.")
+st.markdown("---")
 
-input_sms = st.text_area("Enter the message")
+# Input area
+input_sms = st.text_area("Enter your message here:", height=200)
+predict_btn = st.button("Predict")
+st.markdown("<br>", unsafe_allow_html=True)
 
-if st.button("Predict"):
+if predict_btn:
     if not input_sms.strip():
         st.warning("Please enter a message before predicting.")
     else:
-        # Preprocess the text
         transformed_sms = transform_text(input_sms)
-
         if not transformed_sms.strip():
             st.warning("The message contains no meaningful content after preprocessing.")
         else:
-            # Vectorize and predict
             vector_input = tfidf.transform([transformed_sms])
             prediction = model.predict(vector_input)[0]
 
-            # Output the result
-            if prediction == 1:
-                st.header("🚫 Spam")
+            if hasattr(model, "predict_proba"):
+                proba = model.predict_proba(vector_input)[0]
+                ham_prob, spam_prob = proba[0], proba[1]
             else:
-                st.header("✅ Not Spam")
+                try:
+                    score = model.decision_function(vector_input)[0]
+                    spam_prob = 1 / (1 + 2.718**(-score))
+                    ham_prob = 1 - spam_prob
+                except:
+                    spam_prob, ham_prob = 0.0, 1.0
+
+            st.markdown("---")
+            st.subheader("📊 Prediction Result")
+            st.markdown(
+                f"**Prediction:** {'🚫 Spam' if prediction==1 else '✅ Not Spam'}"
+            )
+            st.markdown(
+                f"<span style='color:green'>Not Spam: {ham_prob*100:.2f}%</span> | "
+                f"<span style='color:red'>Spam: {spam_prob*100:.2f}%</span>",
+                unsafe_allow_html=True
+            )
+
+            if 0.3 <= spam_prob <= 0.7:
+                st.warning("⚠️ This message is borderline spam. Check carefully!")
+
+            # Add a visual progress bar for spam probability
+            st.subheader("📈 Spam Probability")
+            st.progress(int(spam_prob*100))
+
+            # Collapsible preprocessed message
+            with st.expander("📝 Preprocessed Message Analyzed by Model"):
+                st.code(transformed_sms)

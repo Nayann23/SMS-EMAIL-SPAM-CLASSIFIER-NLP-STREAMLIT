@@ -1,4 +1,3 @@
-````markdown
 # 📩 SMS/Email Spam Classifier
 
 A machine learning-based spam detection system built with **Python** and **Streamlit**. It classifies SMS and email messages as **spam** or **not spam** (ham) using **Natural Language Processing (NLP)** and a trained machine learning model.
@@ -72,7 +71,8 @@ A custom `transform_text` function is used to clean and normalize input messages
 - Install dependencies:
 ```bash
 pip install -r requirements.txt
-````
+
+---
 
 ### ▶️ Launch the App
 

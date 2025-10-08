@@ -115,9 +115,7 @@ Ensure `model.pkl` and `vectorizer.pkl` are in the same directory as `app.py`.
 🚫 **Spam**
 
 `Claim your free vacation to the Bahamas now! Visit www.freetrip.com`
-
 `Your number has won £10,000! Text WIN to 89333 to claim.`
-
 `Congratulations! You have won a $1000 Amazon gift card. Click here to claim now!`
 ---
 

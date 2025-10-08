@@ -110,16 +110,19 @@ Ensure `model.pkl` and `vectorizer.pkl` are in the same directory as `app.py`.
 `Congratulations! You have won a $1000 Amazon gift card. Click here to claim now!`
 ```
 ✅ **Not Spam**
-```bash`
-Thanks for the ride today. Really appreciate it.`
+
+```bash
+`Thanks for the ride today. Really appreciate it.`
 ```
 
 ```bash
 `Are you bringing your laptop to the study group tomorrow?`
 ```
+
 ```bash 
 `Hi team, please find attached the project notes and review them.`
 ```
+
 ---
 
 ## 📌 Notes & Future Work
